@@ -1,0 +1,21 @@
+{
+  "id": "1f052718-689c-44a3-9378-7eb8d558a5b7",
+  "name": "Pendu",
+  "description": null,
+  "default_flow": "pendu",
+  "flows": [
+    {
+      "name": "pendu",
+      "description": "Simple barebones flow. Code your own chatbot from this template!",
+      "commands": []
+    },
+    {
+      "name": "testML",
+      "description": "Simple barebones flow. Code your own chatbot from this template!",
+      "commands": []
+    }
+  ],
+  "files": [],
+  "functions": [],
+  "apps": []
+}

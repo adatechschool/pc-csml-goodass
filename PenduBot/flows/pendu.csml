@@ -1,0 +1,81 @@
+start: 
+ say "Hello! Comment t'appelles tu?"
+ hold
+ say Question("hello {{event}}, prêt à jouer au pendu?!", buttons=[
+   Button("Hell yeah!") as btnYes,
+   Button("Nope!")as btnNo
+ ])
+ remember name = event
+ remember tryMax = 10
+ remember arrayOfWords = ["c h a t","d r o m a d a i r e","t i g r e","p u m a","r h i n o c e r o s","c h i e n","l a m a"]
+ remember arrayofletter = []
+ hold
+ if(event match btnYes) {
+   goto play
+ }
+ else if( event match btnNo) {
+   goto end
+ }
+
+play:
+remember word = OneOf(arrayOfWords).split(" ")
+say "{{word}}"
+remember guess = []
+foreach (elem, index) in word {
+  do guess.push("_ ")
+
+}
+remember guessString = guess.join(" ")
+say "Devine ce mot, tu as le droit à 10 tentatives:"
+say Typing(1500)
+say "{{guessString}}"
+goto giveletter
+
+giveletter:
+if (tryMax!=0){
+  say Typing(1500)
+  say "Donne moi une lettre"
+  hold 
+  remember letter = event.to_lowercase() 
+  if (letter.length() == 1 && letter.contains_regex("[a-z]"))
+  {
+      if (word.find(letter) == []) {
+      say "Cette lettre n'est pas dans le mot"
+      do tryMax = tryMax-1
+      say "Il te reste {{tryMax}} vies"
+      goto giveletter 
+    }
+    else {
+        if (arrayofletter.find(letter) == []){
+          do arrayofletter.push(letter)
+            foreach (elem, index) in word {
+            if ( letter == elem) 
+            do guess[index] = letter
+      }
+    say "Well done, tu as decouvert une lettre. Voici le mot!"
+      do guessString2 = guess.join(" ")
+    say "{{guessString2}}"
+      if (guess.find("_ ") == []){
+          say "Bravo tu as gagné🔥🔥🔥!"
+          goto end
+        }
+      else {
+        goto giveletter
+      }
+     }
+      else {
+        say "Tu as déjà donné cette lettre, choisis une autre lettre"
+        goto giveletter
+     }
+    }
+  }
+  else {
+    say "Ceci n'est pas une lettre"
+    goto giveletter
+  }
+} else {
+  say "Game Over"
+  goto end
+}
+
+goto end
