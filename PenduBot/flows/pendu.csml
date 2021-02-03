@@ -1,81 +1,110 @@
 start: 
  say "Hello! Comment t'appelles tu?"
  hold
- say Question("hello {{event}}, prêt à jouer au pendu?!", buttons=[
-   Button("Hell yeah!") as btnYes,
-   Button("Nope!")as btnNo
+ say Question("hello {{event}}, prêt(e) à jouer au pendu?!", buttons=[
+   Button("Hell yeah!",accepts=["Oui","Yes","oui","yes","Hell yeah!"]) as btnYes,
+   Button("Nope!",accepts=["Nope!","No","no","non","Non"])as btnNo
  ])
  remember name = event
- remember tryMax = 10
- remember arrayOfWords = ["c h a t","d r o m a d a i r e","t i g r e","p u m a","r h i n o c e r o s","c h i e n","l a m a"]
+ remember tryMax = 9
+ remember arrayOfWords = ["chat","dromadaire","tigre","puma","rhinoceros","chien","lama"]
  remember arrayofletter = []
  hold
  if(event match btnYes) {
    goto play
  }
  else if( event match btnNo) {
+   say "Dommage!"
    goto end
  }
 
 play:
-remember word = OneOf(arrayOfWords).split(" ")
-say "{{word}}"
-remember guess = []
-foreach (elem, index) in word {
-  do guess.push("_ ")
-
-}
-remember guessString = guess.join(" ")
-say "Devine ce mot, tu as le droit à 10 tentatives:"
-say Typing(1500)
-say "{{guessString}}"
-goto giveletter
+  remember word = OneOf(arrayOfWords).split("")
+  do word.remove_at(0)
+  do word.pop()
+  say "{{word}}"
+  remember guess = []
+  foreach (elem, index) in word {
+    do guess.push("_ ")
+  }
+  remember guessString = guess.join(" ")
+  say "Devine ce mot, tu as le droit à {{tryMax}} tentatives:"
+  say "{{guessString}}"
+  say Typing(1500)
+  goto giveletter
 
 giveletter:
-if (tryMax!=0){
-  say Typing(1500)
-  say "Donne moi une lettre"
-  hold 
-  remember letter = event.to_lowercase() 
-  if (letter.length() == 1 && letter.contains_regex("[a-z]"))
-  {
-      if (word.find(letter) == []) {
-      say "Cette lettre n'est pas dans le mot"
-      do tryMax = tryMax-1
-      say "Il te reste {{tryMax}} vies"
-      goto giveletter 
+  if (tryMax!=0){
+    say Typing(1500)
+    say "Donne moi une lettre ou le mot"
+    hold 
+    remember letter = event.to_lowercase() 
+    if (letter.length() == 1 && letter.contains_regex("[a-z]")){
+
+        if (word.find(letter) == [] && arrayofletter.find(letter) == []) {
+          do arrayofletter.push(letter)
+          say "Cette lettre n'est pas dans le mot"
+          say Image ("https://github.com/adatechschool/pc-csml-goodass/blob/main/penduimg0{{tryMax}}.png?raw=true")
+          do tryMax = tryMax-1
+          say "Il te reste {{tryMax}} vies"
+          say "{{guessString}}"
+          goto giveletter 
+        }
+        else {
+          if (arrayofletter.find(letter) == []){
+            do arrayofletter.push(letter)
+            foreach (elem, index) in word {
+              if ( letter == elem) 
+              do guess[index] = letter
+            }
+            say "Well done, tu as decouvert une lettre. Voici le mot!"
+            do guessString = guess.join(" ")
+            say "{{guessString}}"
+            if (guess.find("_ ") == []){
+              say "Bravo tu as gagné🔥🔥🔥!"
+              say Image ("https://github.com/adatechschool/pc-csml-goodass/blob/main/pendu.gif?raw=true")
+              goto end
+            }
+            else {
+              goto giveletter
+            }
+          }
+          else {
+            say "Tu as déjà donné cette lettre, choisis une autre lettre"
+            say "{{guessString}}"
+            goto giveletter
+          }
+        }
+    }
+    else if(letter.length() > 1 && letter.contains_regex("[a-z]")){
+      do letterArray=letter.split("")
+      do letterArray.remove_at(0)
+      do letterArray.pop()
+      if (letterArray == word){
+        say "Bravo tu as gagné🔥🔥🔥!"
+        say Image ("https://github.com/adatechschool/pc-csml-goodass/blob/main/pendu.gif?raw=true")
+        goto end
+      } 
+      else {
+        say "Ce n'est pas le bon mot"
+        say Image ("https://github.com/adatechschool/pc-csml-goodass/blob/main/penduimg0{{tryMax}}.png?raw=true")
+        say "{{guessString}}"
+        do tryMax = tryMax-1
+        say "Il te reste {{tryMax}} vies"
+        goto giveletter
+      }
     }
     else {
-        if (arrayofletter.find(letter) == []){
-          do arrayofletter.push(letter)
-            foreach (elem, index) in word {
-            if ( letter == elem) 
-            do guess[index] = letter
-      }
-    say "Well done, tu as decouvert une lettre. Voici le mot!"
-      do guessString2 = guess.join(" ")
-    say "{{guessString2}}"
-      if (guess.find("_ ") == []){
-          say "Bravo tu as gagné🔥🔥🔥!"
-          goto end
-        }
-      else {
-        goto giveletter
-      }
-     }
-      else {
-        say "Tu as déjà donné cette lettre, choisis une autre lettre"
-        goto giveletter
-     }
+      say "Ceci n'est pas une lettre"
+      goto giveletter
     }
-  }
+  } 
   else {
-    say "Ceci n'est pas une lettre"
-    goto giveletter
+    remember wordString = word.join(" ")
+    say "Game Over 💀💀💀"
+    say "Le mot était {{wordString}}"
+    say Image ("https://github.com/adatechschool/pc-csml-goodass/blob/main/pendu2.gif?raw=true")
+    goto end
   }
-} else {
-  say "Game Over"
-  goto end
-}
 
 goto end
