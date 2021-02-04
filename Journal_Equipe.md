@@ -10,3 +10,13 @@ Fin du chatbot Pendu la matinée :
  - afficher le mot qu'il fallait trouver en cas de Game Over (Salma, Fanny et Margaux)
 
  1ere Version GiphyBot (Fanny et Margaux)
+
+ 4 Fevrier : Bilan ✨
+
+Auj:
+Debut Bot Film
+
+ Objectif semaine pro:
+ - Finir Bot Film (sortir le synopsis du film choisi par l'utilisateur, faire defiler les autres pages de l'API pour plus de choix, sortir les films populaires du moment a la fin du bot) et deploiement 
+ - Niveau 3 : decouvrir les fonctions externes, croiser les donnees de 2 API differentes 
+Faire le bot qui recommande les livres et propose la librairie la plus proche pour l'acheter
